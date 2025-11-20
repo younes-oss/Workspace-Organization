@@ -46,8 +46,10 @@ function addEmploye(nameValue, roleValue, photoValue, emailValue, phoneValue, ex
     };
 
     employees.push(employee);
-    return employee;
+    
 }
+
+
 
 
 
@@ -100,6 +102,45 @@ experiencesContainer.addEventListener("click", (e) => {
     }
 });
 
+function renderEmployees() {
+    const list = document.getElementById("employees-list");
+    list.innerHTML="";
+
+    employees.forEach((emp,index)=>{
+        const item = document.createElement("div");
+        item.className = "flex items-center justify-between p-3 bg-gray-50 rounded-lg shadow-sm";
+
+        item.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border-2 border-blue-300 overflow-hidden">
+                    <img src="${emp.photo || 'https://via.placeholder.com/40'}" 
+                         class="w-full h-full object-cover" />
+                </div>
+
+                <div>
+                    <p class="font-semibold">${emp.name}</p>
+                    <p class="text-sm text-gray-500">${emp.role}</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button class="edit-employee text-yellow-500 text-sm" data-index="${index}">
+                    <i class="fa-regular fa-pen-to-square" style="color: #31db0f;"></i>
+                </button>
+
+                <button class="delete-employee text-red-600" data-index="${index}">
+                    <i class="fa-solid fa-trash" style="color: #f10404;"></i>
+                </button>
+            </div>
+        `;
+
+        list.appendChild(item)
+
+    });
+
+}
+
+ 
 
 form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -123,10 +164,9 @@ form.addEventListener('submit', function (e) {
         });
     });
 
-    const newEmployee = addEmploye(name, role, photo, email, phone, experiences);
+    addEmploye(name, role, photo, email, phone, experiences);
 
-    console.log("Employe ajoute :", newEmployee);
-    console.log("Liste des employes :", employees);
+    renderEmployees();
 
     hideModal();
 });
