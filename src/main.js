@@ -8,7 +8,7 @@ const cancelBtn = document.getElementById('cancel-btn');
 
 const experiencesContainer = document.getElementById("experiences-container");
 const addExperienceBtn = document.getElementById("add-experience");
-
+const list = document.getElementById("employees-list");
 let employees = [];
 
 
@@ -21,7 +21,7 @@ function loadEmployees() {
     const data = localStorage.getItem("employees");
     if (data) {
         employees = JSON.parse(data);
-        renderEmployees(); 
+        renderEmployees();
     }
 }
 
@@ -52,6 +52,7 @@ openModal();
 
 function addEmploye(nameValue, roleValue, photoValue, emailValue, phoneValue, experiencesList) {
     const employee = {
+        id: Date.now(),
         name: nameValue,
         role: roleValue,
         photo: photoValue,
@@ -61,7 +62,7 @@ function addEmploye(nameValue, roleValue, photoValue, emailValue, phoneValue, ex
     };
 
     employees.push(employee);
-    
+
 }
 
 
@@ -118,11 +119,12 @@ experiencesContainer.addEventListener("click", (e) => {
 });
 
 function renderEmployees() {
-    const list = document.getElementById("employees-list");
-    list.innerHTML="";
 
-    employees.forEach((emp,index)=>{
+    list.innerHTML = "";
+
+    employees.forEach((emp, index) => {
         const item = document.createElement("div");
+        item.setAttribute("employe-id", `${emp.id}`)
         item.className = "flex items-center justify-between p-3 bg-gray-50 rounded-lg shadow-sm";
 
         item.innerHTML = `
@@ -143,9 +145,10 @@ function renderEmployees() {
                     <i class="fa-regular fa-pen-to-square" style="color: #31db0f;"></i>
                 </button>
 
-                <button class="delete-employee text-red-600" data-index="${index}">
-                    <i class="fa-solid fa-trash" style="color: #f10404;"></i>
+                <button class="delete-employee text-red-600" data-id="${emp.id}">
+                <i class="fa-solid fa-trash" data-id="${emp.id}" style="color: #f10404;"></i>
                 </button>
+
             </div>
         `;
 
@@ -155,7 +158,28 @@ function renderEmployees() {
 
 }
 
- 
+
+list.addEventListener("click", (e) => {
+
+    // remove employe from page
+
+    if (e.target.classList.contains("fa-trash") ) {
+
+            e.target.parentElement.parentElement.parentElement.remove();
+        console.log("clique");
+        
+            // remove employe from localStorage
+          deletEmployeWithId(e.target.parentElement.parentElement.parentElement.getAttribute("employe-id"));
+        
+    }
+});
+
+    function deletEmployeWithId(employId){
+        employees = employees.filter(emp => emp.id != employId);
+        saveEmployees();
+        renderEmployees();
+    }
+
 
 form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -181,8 +205,8 @@ form.addEventListener('submit', function (e) {
 
     addEmploye(name, role, photo, email, phone, experiences);
 
-            saveEmployees();     
-            renderEmployees();   
+    saveEmployees();
+    renderEmployees();
     hideModal();
 });
 
