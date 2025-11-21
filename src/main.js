@@ -12,6 +12,21 @@ const addExperienceBtn = document.getElementById("add-experience");
 let employees = [];
 
 
+// Fonction pour sauvegarder dans localStorage
+function saveEmployees() {
+    localStorage.setItem("employees", JSON.stringify(employees));
+}
+// Fonction pour charger depuis localStorage
+function loadEmployees() {
+    const data = localStorage.getItem("employees");
+    if (data) {
+        employees = JSON.parse(data);
+        renderEmployees(); 
+    }
+}
+
+
+
 
 // Ouvrir la modale
 function openModal() {
@@ -166,8 +181,11 @@ form.addEventListener('submit', function (e) {
 
     addEmploye(name, role, photo, email, phone, experiences);
 
-    renderEmployees();
-
+            saveEmployees();     
+            renderEmployees();   
     hideModal();
 });
+
+loadEmployees();
+
 
