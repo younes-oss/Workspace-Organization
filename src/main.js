@@ -9,6 +9,10 @@ const cancelBtn = document.getElementById('cancel-btn');
 const experiencesContainer = document.getElementById("experiences-container");
 const addExperienceBtn = document.getElementById("add-experience");
 const list = document.getElementById("employees-list");
+
+const detailsModal = document.getElementById("employee-details-modal");
+const detailsContent = document.getElementById("details-content");
+const closeDetails = document.getElementById("close-details");
 let employees = [];
 
 
@@ -125,7 +129,7 @@ function renderEmployees() {
     employees.forEach((emp, index) => {
         const item = document.createElement("div");
         item.setAttribute("employe-id", `${emp.id}`)
-        item.className = "flex items-center justify-between p-3 bg-gray-50 rounded-lg shadow-sm";
+        item.className = "employee-item flex items-center justify-between p-3 bg-gray-50 rounded-lg shadow-sm";
 
         item.innerHTML = `
             <div class="flex items-center gap-3">
@@ -172,6 +176,20 @@ list.addEventListener("click", (e) => {
           deletEmployeWithId(e.target.parentElement.parentElement.parentElement.getAttribute("employe-id"));
         
     }
+
+
+    const parent = e.target.closest(".employee-item");
+    console.log(parent);
+    console.log("clique");
+    
+
+         const id = parent.getAttribute("employe-id");
+         const employee = employees.find(emp => emp.id == id);
+          if (employee) {
+            showEmployeeDetails(employee);
+        }
+     
+
 });
 
     function deletEmployeWithId(employId){
@@ -210,6 +228,35 @@ form.addEventListener('submit', function (e) {
     hideModal();
 });
 
+function showEmployeeDetails(emp) {
+    detailsContent.innerHTML = `
+        <div class="flex flex-col items-center gap-3">
+            <img src="${emp.photo}" class="w-24 h-24 rounded-full border-2 border-blue-400" />
+
+            <h2 class="text-xl font-semibold">${emp.name}</h2>
+            <p class="text-gray-500">${emp.role}</p>
+
+            <p><strong>Email :</strong> ${emp.email}</p>
+            <p><strong>Téléphone :</strong> ${emp.phone}</p>
+
+            <h3 class="mt-4 font-semibold">Expériences :</h3>
+            <div class="pl-4">
+                ${emp.experiences.map(exp => `
+                    <div class="mb-2">
+                        <p><strong>${exp.poste}</strong> chez <strong>${exp.entreprise}</strong></p>
+                        <p>${exp.start} → ${exp.end}</p>
+                    </div>
+                `).join("")}
+            </div>
+        </div>
+    `;
+
+    detailsModal.classList.remove("hidden");
+}
+
+closeDetails.addEventListener("click", () => {
+    detailsModal.classList.add("hidden");
+});
 loadEmployees();
 
 
