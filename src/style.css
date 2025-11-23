@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+.position-1 { top: 50px; right: 50px; }
+.position-2 { top: 50px; left: 50px; }
+.position-3 { bottom: 50px; right: 50px; }
+.position-4 { bottom: 50px; left: 50px; }
