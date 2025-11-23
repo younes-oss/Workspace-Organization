@@ -13,6 +13,22 @@ const list = document.getElementById("employees-list");
 const detailsModal = document.getElementById("employee-details-modal");
 const detailsContent = document.getElementById("details-content");
 const closeDetails = document.getElementById("close-details");
+const selector = document.getElementById("select-employee-modal");
+const employeeList = document.getElementById("employee-list");
+const closeSelector = document.getElementById("close-selector");
+let currentZone = null;
+
+
+const zoneRules = {
+    reception: ["manager", "manager"],      
+    serveurs: ["it", "manager"],             
+    securite: ["securite", "manager"],      
+    archives: ["manager"],             
+    conference: "all",
+    personnel: "all"
+};
+
+
 let employees = [];
 
 
@@ -167,36 +183,36 @@ list.addEventListener("click", (e) => {
 
     // remove employe from page
 
-    if (e.target.classList.contains("fa-trash") ) {
+    if (e.target.classList.contains("fa-trash")) {
 
-            e.target.parentElement.parentElement.parentElement.remove();
+        e.target.parentElement.parentElement.parentElement.remove();
         console.log("clique");
-        
-            // remove employe from localStorage
-          deletEmployeWithId(e.target.parentElement.parentElement.parentElement.getAttribute("employe-id"));
-        
+
+        // remove employe from localStorage
+        deletEmployeWithId(e.target.parentElement.parentElement.parentElement.getAttribute("employe-id"));
+
     }
 
 
     const parent = e.target.closest(".employee-item");
     console.log(parent);
     console.log("clique");
-    
 
-         const id = parent.getAttribute("employe-id");
-         const employee = employees.find(emp => emp.id == id);
-          if (employee) {
-            showEmployeeDetails(employee);
-        }
-     
+
+    const id = parent.getAttribute("employe-id");
+    const employee = employees.find(emp => emp.id == id);
+    if (employee) {
+        showEmployeeDetails(employee);
+    }
+
 
 });
 
-    function deletEmployeWithId(employId){
-        employees = employees.filter(emp => emp.id != employId);
-        saveEmployees();
-        renderEmployees();
-    }
+function deletEmployeWithId(employId) {
+    employees = employees.filter(emp => emp.id != employId);
+    saveEmployees();
+    renderEmployees();
+}
 
 
 form.addEventListener('submit', function (e) {
@@ -257,6 +273,125 @@ function showEmployeeDetails(emp) {
 closeDetails.addEventListener("click", () => {
     detailsModal.classList.add("hidden");
 });
+
+
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("add-employee")) {
+        currentZone = e.target.closest(".zone");
+        showEmployeeSelector();
+    }
+});
+
+function showEmployeeSelector() {
+
+    const zoneType = currentZone.dataset.zone;  // ex: "securite"
+    const rules = zoneRules[zoneType];
+
+    employeeList.innerHTML = "";
+
+    let allowedEmployees = [];
+
+    // Zone libre → montrer tous les employés
+    if (rules === "all") {
+        allowedEmployees = employees;
+    } 
+    else {
+        // Filtrer selon les rôles autorisés
+        allowedEmployees = employees.filter(emp => rules.includes(emp.role));
+    }
+
+    // Si aucun employé autorisé
+    if (allowedEmployees.length === 0) {
+        employeeList.innerHTML = `
+            <p class="text-center text-red-500 p-3">Aucun employé autorisé pour cette zone.</p>
+        `;
+        selector.classList.remove("hidden");
+        return;
+    }
+
+    // Créer la liste
+    allowedEmployees.forEach(emp => {
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-3 p-2 border rounded cursor-pointer hover:bg-gray-100";
+        div.dataset.id = emp.id;
+
+        div.innerHTML = `
+            <img src="${emp.photo}" class="w-10 h-10 rounded-full object-cover border">
+            <div>
+                <p class="font-semibold">${emp.name}</p>
+                <p class="text-sm text-gray-600">${emp.role}</p>
+            </div>
+        `;
+
+        employeeList.appendChild(div);
+    });
+
+    selector.classList.remove("hidden");
+}
+
+employeeList.addEventListener("click", (e) => {
+    const card = e.target.closest("[data-id]");
+    if (!card) return;
+
+    const id = card.dataset.id;
+    const emp = employees.find(em => em.id == id);
+
+    if (emp && currentZone) {
+        addEmployeeToZone(emp, currentZone);
+    }
+
+    selector.classList.add("hidden");
+});
+
+closeSelector.addEventListener("click", () => {
+    selector.classList.add("hidden");
+});
+
+
+function addEmployeeToZone(emp, zone) {
+    const container = zone.querySelector(".chosen-employees");
+
+    // Limite 4 employés max
+    const count = container.children.length;
+    if (count >= 4) {
+        alert("Cette zone contient déjà 4 employés !");
+        return;
+    }
+
+    // Position de la carte
+    const positions = ["position-1", "position-2", "position-3", "position-4"];
+    const posClass = positions[count];
+
+    const card = document.createElement("div");
+    card.className = `absolute ${posClass} pointer-events-auto`;
+
+    card.innerHTML = `
+        <div class="flex items-center gap-1 bg-white p-1 rounded shadow relative">
+
+            <img src="${emp.photo}" class="w-6 h-6 rounded-full border border-blue-400 object-cover" />
+
+            <div>
+                <p class="text-[10px] font-bold leading-none">${emp.name}</p>
+                <p class="text-[9px] text-gray-600 leading-none">${emp.role}</p>
+            </div>
+
+            <!-- bouton retirer -->
+            <button class="remove-emp absolute -top-2 -right-2 text-red-600 text-sm bg-white rounded-full w-4 h-4">
+                ✕
+            </button>
+
+        </div>
+    `;
+
+    container.appendChild(card);
+}
+
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-emp")) {
+        e.target.closest(".pointer-events-auto").remove();
+    }
+});
+
 loadEmployees();
 
 

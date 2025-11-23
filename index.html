@@ -98,74 +98,102 @@
 
         <div class="grid grid-cols-3 gap-6">
 
-            <div class="relative col-span-1">
-                <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
-                <button
-                    class="absolute top-2 right-2 bg-white text-black text-2xl rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
-                    +
-                </button>
-                <p class="mt-2 text-center font-semibold">Salle de conférence</p>
-            </div>
+    <div class="relative col-span-1 zone" data-zone="conference">
+        <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
+        <div class="chosen-employees absolute inset-0 pointer-events-none"></div>
 
-            <div></div>
+        <button
+            class="add-employee absolute top-2 right-2 bg-white text-black text-2xl rounded-full 
+                   w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
+            +
+        </button>
 
-
-            <div class="relative col-span-1">
-                <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
-                <button
-                    class="absolute top-2 right-2 bg-white text-black text-2xl rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
-                    +
-                </button>
-                <p class="mt-2 text-center font-semibold">Réception</p>
-            </div>
+        <p class="mt-2 text-center font-semibold">Salle de conférence</p>
+    </div>
 
 
-
-            <div></div>
-
-
-            <div class="relative col-span-1">
-                <img src="src/assets/img/zone.jpg" class="w-full h-48 object-cover rounded-lg shadow">
-                <button
-                    class="absolute top-2 right-2 bg-white text-black text-2xl rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
-                    +
-                </button>
-                <p class="mt-2 text-center font-semibold">Salle des serveurs</p>
-            </div>
-
-            <div></div>
+    <div></div>
 
 
+    
+    <div class="relative col-span-1 zone" data-zone="reception">
+        <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
+        <div class="chosen-employees absolute inset-0 pointer-events-none"></div>
 
-            <div class="relative col-span-1">
-                <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
-                <button
-                    class="absolute top-2 right-2 bg-white text-black text-2xl rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
-                    +
-                </button>
-                <p class="mt-2 text-center font-semibold">Salle de sécurité</p>
-            </div>
+        <button
+            class="add-employee absolute top-2 right-2 bg-white text-black text-2xl rounded-full 
+                   w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
+            +
+        </button>
+
+        <p class="mt-2 text-center font-semibold">Réception</p>
+    </div>
 
 
-            <div class="relative col-span-1">
-                <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
-                <button
-                    class="absolute top-2 right-2 bg-white text-black text-2xl rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
-                    +
-                </button>
-                <p class="mt-2 text-center font-semibold">Salle du personnel</p>
-            </div>
+    <div></div>
 
-            <div class="relative col-span-1">
-                <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
-                <button
-                    class=" absolute top-2 right-2 bg-white text-black text-2xl rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
-                    +
-                </button>
-                <p class="mt-2 text-center font-semibold">Salle archives</p>
-            </div>
 
-        </div>
+    
+    <div class="relative col-span-1 zone" data-zone="serveurs">
+        <img src="src/assets/img/zone.jpg" class="w-full h-48 object-cover rounded-lg shadow">
+        <div class="chosen-employees absolute inset-0 pointer-events-none"></div>
+
+        <button
+            class="add-employee absolute top-2 right-2 bg-white text-black text-2xl rounded-full 
+                   w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
+            +
+        </button>
+
+        <p class="mt-2 text-center font-semibold">Salle des serveurs</p>
+    </div>
+
+
+    <div></div>
+
+
+    <div class="relative col-span-1 zone" data-zone="securite">
+        <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
+        <div class="chosen-employees absolute inset-0 pointer-events-none"></div>
+
+        <button
+            class="add-employee absolute top-2 right-2 bg-white text-black text-2xl rounded-full 
+                   w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
+            +
+        </button>
+
+        <p class="mt-2 text-center font-semibold">Salle de sécurité</p>
+    </div>
+
+
+    <div class="relative col-span-1 zone" data-zone="personnel">
+        <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
+        <div class="chosen-employees absolute inset-0 pointer-events-none"></div>
+
+        <button
+            class="add-employee absolute top-2 right-2 bg-white text-black text-2xl rounded-full 
+                   w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
+            +
+        </button>
+
+        <p class="mt-2 text-center font-semibold">Salle du personnel</p>
+    </div>
+
+
+    <div class="relative col-span-1 zone" data-zone="archives">
+        <img src="src/assets/img/zone.jpg" class="w-full h-40 object-cover rounded-lg shadow">
+        <div class="chosen-employees absolute inset-0 pointer-events-none"></div>
+
+        <button
+            class="add-employee absolute top-2 right-2 bg-white text-black text-2xl rounded-full 
+                   w-8 h-8 flex items-center justify-center shadow hover:bg-gray-100">
+            +
+        </button>
+
+        <p class="mt-2 text-center font-semibold">Salle archives</p>
+    </div>
+
+</div>
+
 
     </main>
 
@@ -195,10 +223,11 @@
                         <label class="block font-medium">Rôle</label>
                         <select id="employee-role" class="w-full border rounded p-2" required>
                             <option value="">-- Sélectionner un rôle --</option>
+                            <option value="manager">Receptionniste</option>
                             <option value="manager">Manager</option>
                             <option value="nettoyage">Nettoyage</option>
-                            <option value="it">IT</option>
-                            <option value="securite">Sécurité</option>
+                            <option value="it">Technicien IT</option>
+                            <option value="securite">Agent de securite</option>
                             <option value="autre">Autre</option>
                         </select>
                     </div>
@@ -254,15 +283,28 @@
     </div>
 
     <div id="employee-details-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
 
-        <button id="close-details" class="absolute top-2 right-2 text-red-600 text-xl">✖</button>
+            <button id="close-details" class="absolute top-2 right-2 text-red-600 text-xl">✖</button>
 
-        <div id="details-content">
-            
+            <div id="details-content">
+
+            </div>
         </div>
     </div>
+
+   <div id="select-employee-modal" class="hidden fixed inset-0 bg-black/40 flex justify-center items-center">
+    <div class="bg-white p-4 rounded shadow-lg w-80">
+        <h2 class="text-lg font-bold mb-3">Sélectionner un employé</h2>
+
+        <div id="employee-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+
+        <button id="close-selector" class="mt-4 bg-red-500 text-white px-3 py-1 rounded">
+            Fermer
+        </button>
+    </div>
 </div>
+
 
 
     <script src="src/main.js"></script>
