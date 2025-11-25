@@ -16,17 +16,31 @@ const closeDetails = document.getElementById("close-details");
 const selector = document.getElementById("select-employee-modal");
 const employeeList = document.getElementById("employee-list");
 const closeSelector = document.getElementById("close-selector");
+const searchInput = document.getElementById("employee-search");
+
 let currentZone = null;
 
-
-const zoneRules = {
-    reception: ["manager", "manager"],      
-    serveurs: ["it", "manager"],             
-    securite: ["securite", "manager"],      
-    archives: ["manager"],             
-    conference: "all",
-    personnel: "all"
+const zoneLimits = {
+    "securite": 3,
+    "reception": 4,
+    "serveurs": 4,
+    "conference": 4,
+    "personnel": 4,
+    "archives": 4
 };
+
+const zonePermissions = {
+    "reception": ["receptionniste"],
+    "serveurs": ["it", "manager"],
+    "securite": ["securite", "manager"],
+    "conference": ["manager", "autre", "receptionniste", "nettoyage", "it", "securite"],
+    "personnel": ["manager", "autre", "receptionniste", "nettoyage"],
+    "archives": ["manager", "it", "securite"], 
+};
+
+searchInput.addEventListener("input", () => {
+    renderEmployees(searchInput.value.trim().toLowerCase());
+});
 
 
 let employees = [];
@@ -138,13 +152,21 @@ experiencesContainer.addEventListener("click", (e) => {
     }
 });
 
-function renderEmployees() {
+function renderEmployees(search="") {
 
     list.innerHTML = "";
 
-    employees.forEach((emp, index) => {
+    const unassignedEmployees = employees.filter(emp => !emp.assignedTo);
+
+    
+
+
+    // const filtered = unassignedEmployees.filter(emp=>emp.name.toLowerCase().includes(search)||
+    // emp.role.toLowerCase().includes(search))
+
+    unassignedEmployees.forEach((emp, index) => {
         const item = document.createElement("div");
-        item.setAttribute("employe-id", `${emp.id}`)
+        item.setAttribute("employe-id", `${emp.id}`);
         item.className = "employee-item flex items-center justify-between p-3 bg-gray-50 rounded-lg shadow-sm";
 
         item.innerHTML = `
@@ -153,7 +175,6 @@ function renderEmployees() {
                     <img src="${emp.photo || 'https://via.placeholder.com/40'}" 
                          class="w-full h-full object-cover" />
                 </div>
-
                 <div>
                     <p class="font-semibold">${emp.name}</p>
                     <p class="text-sm text-gray-500">${emp.role}</p>
@@ -164,22 +185,20 @@ function renderEmployees() {
                 <button class="edit-employee text-yellow-500 text-sm" data-index="${index}">
                     <i class="fa-regular fa-pen-to-square" style="color: #31db0f;"></i>
                 </button>
-
                 <button class="delete-employee text-red-600" data-id="${emp.id}">
-                <i class="fa-solid fa-trash" data-id="${emp.id}" style="color: #f10404;"></i>
+                    <i class="fa-solid fa-trash" style="color: #f10404;" data-id="${emp.id}"></i>
                 </button>
-
             </div>
         `;
 
-        list.appendChild(item)
-
+        list.appendChild(item);
     });
-
 }
 
 
 list.addEventListener("click", (e) => {
+
+    console.log(list)
 
     // remove employe from page
 
@@ -277,6 +296,7 @@ closeDetails.addEventListener("click", () => {
 
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("add-employee")) {
+        console.log("clique")
         currentZone = e.target.closest(".zone");
         showEmployeeSelector();
     }
@@ -284,42 +304,32 @@ document.addEventListener("click", (e) => {
 
 function showEmployeeSelector() {
 
-    const zoneType = currentZone.dataset.zone;  // ex: "securite"
-    const rules = zoneRules[zoneType];
+    const zoneName = currentZone.dataset.zone;
+    const allowedRoles = zonePermissions[zoneName];
 
     employeeList.innerHTML = "";
 
-    let allowedEmployees = [];
+    const availableEmployees = employees.filter(emp => 
+        !emp.assignedTo && allowedRoles.includes(emp.role)
+    );
 
-    // Zone libre → montrer tous les employés
-    if (rules === "all") {
-        allowedEmployees = employees;
-    } 
-    else {
-        // Filtrer selon les rôles autorisés
-        allowedEmployees = employees.filter(emp => rules.includes(emp.role));
+    if (availableEmployees.length === 0) {
+        employeeList.innerHTML = "<p class='p-3 text-center text-gray-500'>Aucun employé autorisé pour cette zone</p>";
     }
 
-    // Si aucun employé autorisé
-    if (allowedEmployees.length === 0) {
-        employeeList.innerHTML = `
-            <p class="text-center text-red-500 p-3">Aucun employé autorisé pour cette zone.</p>
-        `;
-        selector.classList.remove("hidden");
-        return;
-    }
+    availableEmployees.forEach(emp => {
 
-    // Créer la liste
-    allowedEmployees.forEach(emp => {
         const div = document.createElement("div");
-        div.className = "flex items-center gap-3 p-2 border rounded cursor-pointer hover:bg-gray-100";
+        div.className = "p-2 border rounded cursor-pointer hover:bg-gray-100";
         div.dataset.id = emp.id;
 
         div.innerHTML = `
-            <img src="${emp.photo}" class="w-10 h-10 rounded-full object-cover border">
-            <div>
-                <p class="font-semibold">${emp.name}</p>
-                <p class="text-sm text-gray-600">${emp.role}</p>
+            <div class="flex items-center gap-2">
+                <img src="${emp.photo}" class="w-8 h-8 rounded-full object-cover border">
+                <div>
+                    <p class="font-semibold text-sm">${emp.name}</p>
+                    <p class="text-xs text-gray-600">${emp.role}</p>
+                </div>
             </div>
         `;
 
@@ -329,19 +339,22 @@ function showEmployeeSelector() {
     selector.classList.remove("hidden");
 }
 
-employeeList.addEventListener("click", (e) => {
-    const card = e.target.closest("[data-id]");
-    if (!card) return;
 
-    const id = card.dataset.id;
+employeeList.addEventListener("click", (e) => {
+    const id = e.target.closest("[data-id]")?.dataset.id;
+    if (!id) return;
+
     const emp = employees.find(em => em.id == id);
 
-    if (emp && currentZone) {
-        addEmployeeToZone(emp, currentZone);
-    }
+    addEmployeeToZone(emp, currentZone);
+
+    emp.assignedTo = currentZone.dataset.zone;
+    saveEmployees();
+    renderEmployees(); // sidebar update
 
     selector.classList.add("hidden");
 });
+
 
 closeSelector.addEventListener("click", () => {
     selector.classList.add("hidden");
@@ -351,44 +364,95 @@ closeSelector.addEventListener("click", () => {
 function addEmployeeToZone(emp, zone) {
     const container = zone.querySelector(".chosen-employees");
 
-    // Limite 4 employés max
-    const count = container.children.length;
-    if (count >= 4) {
+    // const zoneName = zone.dataset.zone;
+
+    // const maxEmployees = zoneLimits[zoneName] || 4;
+
+    if (container.children.length >= 4) {
         alert("Cette zone contient déjà 4 employés !");
         return;
     }
 
-    // Position de la carte
+//     if (emp.role === "manager") {
+//   
+//     for (let card of container.children) {
+
+//         let id = card.dataset.id;
+//         let employee = employees.find(e => e.id == id);
+
+//         if (employee && employee.role === "manager") {
+//             alert("Un seul manager est autorisé dans cette zone.");
+//             return;
+//         }
+//     }
+// }
+
+
     const positions = ["position-1", "position-2", "position-3", "position-4"];
-    const posClass = positions[count];
+    const posClass = positions[container.children.length];
 
     const card = document.createElement("div");
-    card.className = `absolute ${posClass} pointer-events-auto`;
+    card.className = `absolute ${posClass}`;
+    card.dataset.id = emp.id; 
 
     card.innerHTML = `
         <div class="flex items-center gap-1 bg-white p-1 rounded shadow relative">
 
-            <img src="${emp.photo}" class="w-6 h-6 rounded-full border border-blue-400 object-cover" />
+            <img src="${emp.photo}" class="w-6 h-6 rounded-full" />
 
             <div>
                 <p class="text-[10px] font-bold leading-none">${emp.name}</p>
                 <p class="text-[9px] text-gray-600 leading-none">${emp.role}</p>
             </div>
 
-            <!-- bouton retirer -->
             <button class="remove-emp absolute -top-2 -right-2 text-red-600 text-sm bg-white rounded-full w-4 h-4">
                 ✕
             </button>
-
         </div>
     `;
 
     container.appendChild(card);
+        emp.assignedTo = zone.dataset.zone;
+        emp.zonePosition = container.children.length - 1; 
+        saveEmployees();
+
 }
+
+function reorganizeZoneEmployees(zone) {
+    const container = zone.querySelector(".chosen-employees");
+    const cards = Array.from(container.children);
+
+    const positions = ["position-1", "position-2", "position-3", "position-4"];
+
+    cards.forEach((card, index) => {
+        // supprimer les anciennes classes position-x
+        positions.forEach(p => card.classList.remove(p));
+
+        // ajouter la bonne position
+        card.classList.add(positions[index]);
+    });
+}
+
+
 
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("remove-emp")) {
-        e.target.closest(".pointer-events-auto").remove();
+
+        const card = e.target.closest("[data-id]");
+        const id = card.dataset.id;
+
+        const emp = employees.find(em => em.id == id);
+
+        emp.assignedTo = null;
+
+        saveEmployees();
+        renderEmployees();
+
+        const zone = card.closest(".zone"); 
+
+        card.remove(); 
+
+        reorganizeZoneEmployees(zone); 
     }
 });
 
